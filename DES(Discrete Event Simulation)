@@ -1,0 +1,131 @@
+import java.util.*;
+
+public class TrafficSimulation {
+    public static void main(String[] args) {
+        PriorityQueue<Vehicle> trafficQueue = new PriorityQueue<>();
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of vehicles: ");
+        int numVehicles = scanner.nextInt();
+
+        for (int i = 0; i < numVehicles; i++) {
+            System.out.println("Enter details for Vehicle " + (i + 1) + ":");
+            System.out.print("Type (1-Car, 2-Bike, 3-Auto, 4-Ambulance, 5-Police Car): ");
+            int type = scanner.nextInt();
+
+            Vehicle vehicle;
+            switch (type) {
+                case 1:
+                    vehicle = new Car();
+                    break;
+                case 2:
+                    vehicle = new Bike();
+                    break;
+                case 3:
+                    vehicle = new Auto();
+                    break;
+                case 4:
+                    vehicle = new Ambulance();
+                    System.out.print("Are there patients in the ambulance? (1-Yes, 0-No): ");
+                    int hasPatients = scanner.nextInt();
+                    ((Ambulance) vehicle).setHasPatients(hasPatients == 1);
+                    break;
+                case 5:
+                    vehicle = new PoliceCar();
+                    break;
+                default:
+                    System.out.println("Invalid vehicle type. Skipping...");
+                    continue;
+            }
+
+            trafficQueue.add(vehicle);
+        }
+
+        System.out.println("Traffic Queue:");
+        while (!trafficQueue.isEmpty()) {
+            Vehicle vehicle = trafficQueue.poll();
+            System.out.println(vehicle);
+        }
+    }
+}
+
+abstract class Vehicle implements Comparable<Vehicle> {
+    protected int priority;
+
+    public int getPriority() {
+        return priority;
+    }
+
+    @Override
+    public int compareTo(Vehicle other) {
+        if (this.getPriority() != other.getPriority()) {
+            return Integer.compare(this.getPriority(), other.getPriority());
+        }
+        return this.getClass().getSimpleName().compareTo(other.getClass().getSimpleName());
+    }
+}
+
+class Car extends Vehicle {
+    public Car() {
+        priority = 3;
+    }
+
+    @Override
+    public String toString() {
+        return "Car";
+    }
+}
+
+class Bike extends Vehicle {
+    public Bike() {
+        priority = 3;
+    }
+
+    @Override
+    public String toString() {
+        return "Bike";
+    }
+}
+
+class Auto extends Vehicle {
+    public Auto() {
+        priority = 3;
+    }
+
+    @Override
+    public String toString() {
+        return "Auto";
+    }
+}
+
+class Ambulance extends Vehicle {
+    private boolean hasPatients;
+
+    public Ambulance() {
+        priority = 2;
+    }
+
+    public void setHasPatients(boolean hasPatients) {
+        this.hasPatients = hasPatients;
+        if (hasPatients) {
+            priority = 0;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Ambulance" + (hasPatients ? " (with patients)" : "");
+    }
+}
+
+class PoliceCar extends Vehicle {
+    public PoliceCar() {
+        priority = 1;
+    }
+
+    @Override
+    public String toString() {
+        return "Police Car";
+    }
+}
